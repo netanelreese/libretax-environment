@@ -1,2 +1,2 @@
-# libretax-environment
-Scripts and Various Utilities to set up the servers that will host the various things needed for LibreTax.
+# LibreTax Environment Automation
+This repository holds all of the scripts, utilities, etc. that will be used to automate the installation of the servers and various other things LibreTax needs.
