@@ -27,4 +27,4 @@ When you add or change a package make sure you adhere to the directory conventio
 3. Update the README description and usage.
 
 ### Packages
-* [Environment](./lt_env/README.md)
+* [Environment](./lt_env/)
