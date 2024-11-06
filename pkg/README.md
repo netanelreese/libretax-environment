@@ -19,7 +19,8 @@ When you add or change a package make sure you adhere to the directory conventio
 2. Add the scripts to the source dir.
 3. Create the spec file with proper convention (refer to existing spec files for guidance).
 4. Create a README with a description and usage.
-5. Add the package to the proper kickstart.
+5. In the pkg README, add an entry under [packages](#packages), link it to the package root directory, and add a short description for the package (italicize the description).
+6. Add the package to the proper kickstart.
 
 #### Package Editing
 1. Make the desired source changes.
@@ -27,4 +28,4 @@ When you add or change a package make sure you adhere to the directory conventio
 3. Update the README description and usage.
 
 ### Packages
-* [Environment](./lt_env/)
+* [Environment](./lt_env/): *LibreTax enterprise system environment variables*.
