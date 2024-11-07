@@ -44,29 +44,35 @@ ISOMNTDIR="${BUILD_DIR}/mnt"
 # Find and set the environment file in the home directory of runner.
 set_env() {
 	source "${ENV}"
-	print_info "Setting environment file: ${ENV}"
+	print_info "Set environment: ${ENV}"
+}
+
+exception() {
+	print_error $1
+ 	cleanup
+  	exit 1
 }
 
 # Creates the directory used to build
 prep_build_dir() {
 	print_info "Creating temp build directory at ${BUILD_DIR}"
-	mkdir -p "${ISOWORKDIR}" || print_error "Could not create ${ISOWORKDIR}" && cleanup && exit 1;
- 	mkdir -p "${ISOMNTDIR}" || print_error "Could not create ${ISOMNTDIR}" && cleanup && exit 1;
+	mkdir -p "${ISOWORKDIR}" || exception "Could not create ${ISOWORKDIR}"
+ 	mkdir -p "${ISOMNTDIR}" || exception "Could not create ${ISOMNTDIR}"
 	print_success "Build Directory Created: ${BUILD_DIR}"
 }
 
 # Pulls latest x64 iso from cent mirror
 pull_latest_iso() {
-	curl "${ISO_SRC}" -o "${BUILD_DIR}/${SRC_ISO}" || print_error "Could not pull latest CentOS iso" && cleanup && exit 1;
- 	curl "${ISO_MD5}" -o "${BUILD_DIR}/${SRC_ISO}.MD5SUM" || print_error "Could not pull latest CentOS iso MD5 checksum" && cleanup && exit 1;
-	curl "${IDO_SHA1}" -o "${BUILD_DIR}/${SRC_ISO}.SHA1SUM" || print_error "Could not pull latest CentOS iso SHA1 checksum" && cleanup && exit 1;
- 	curl "${ISO_SHA256}" -o "${BUILD_DIR}/${SRC_ISO}.SHA256SUM" || print_error "Could not pull latest CentOS iso SHA256 checksum" && cleanup && exit 1;
+	curl "${ISO_SRC}" -o "${BUILD_DIR}/${SRC_ISO}" || exception "Could not pull latest CentOS iso"
+ 	curl "${ISO_MD5}" -o "${BUILD_DIR}/${SRC_ISO}.MD5SUM" || exception "Could not pull latest CentOS iso MD5 checksum"
+	curl "${IDO_SHA1}" -o "${BUILD_DIR}/${SRC_ISO}.SHA1SUM" || exception "Could not pull latest CentOS iso SHA1 checksum"
+ 	curl "${ISO_SHA256}" -o "${BUILD_DIR}/${SRC_ISO}.SHA256SUM" || exception "Could not pull latest CentOS iso SHA256 checksum"
 
  	# Verify Checksums
   	pushd "${BUILD_DIR}"
-	md5sum -c "${SRC_ISO}".MD5SUM || print_error "MD5 CHECKSUM DOES NOT MATCH" && cleanup && exit 1;
- 	sha1sum -c "${SRC_ISO}".SHA1SUM || print_error "SHA1 CHECKSUM DOES NOT MATCH" && cleanup && exit 1;
-  	sha256sum -c "${SRC_ISO}".SHA256SUM || print_error "SHA256 CHECKSUM DOES NOT MATCH" && cleanup && exit 1;
+	md5sum -c "${SRC_ISO}".MD5SUM || exception "MD5 CHECKSUM DOES NOT MATCH"
+ 	sha1sum -c "${SRC_ISO}".SHA1SUM || exception "SHA1 CHECKSUM DOES NOT MATCH"
+  	sha256sum -c "${SRC_ISO}".SHA256SUM || exception "SHA256 CHECKSUM DOES NOT MATCH"
    	popd
 }
 
@@ -80,9 +86,7 @@ build_iso() {
     	        -o "${OUTPUT_ISO}" "${ISOWORKDIR}"
 
 	if [ $? -ne 0 ]; then
-	    print_error "Failed to create the ISO\n"
-	    cleanup
-	    exit 1
+	    exception "Failed to create ${OUTPUT_ISO}"
 	fi
 }
 
@@ -100,6 +104,7 @@ cleanup() {
 ####################################################################################################
 # Start Script Execution
 ####################################################################################################
+echo -e "${BIGREEN}Starting LibreTax ISO Build...${NC}"
 set_env
 prep_build_dir
 pull_latest_iso
