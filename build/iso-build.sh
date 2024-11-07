@@ -11,11 +11,12 @@
 # MODIFIED: 2024-11-07
 # VERSION: 1.0
 #==============================================================================
+source $(cd .. && pwd)/pkg/lt_env/SOURCE/lt.env
 
 set -e
 
 if [[ "$EUID" -ne 0 ]]; then
-   echo "This script must be run as root." >&2
+   print_error "This script must be run as root." >&2
    exit 1
 fi
 
@@ -24,12 +25,12 @@ fi
 ####################################################################################################
 
 REPO_DIR="$(cd .. && pwd)"
-ENV="${REPO_DIR}/pkg/lt_env/SOURCE/lt.env"
+ENV=""
 ISO_SRC="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso"
 SRC_ISO="CentOS-Stream-9-latest-x86_64-dvd1.iso"
-ISO_MD5="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-boot.iso.MD5SUM"
-ISO_SHA1="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-boot.iso.SHA1SUM"
-ISO_SHA256="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-20241028.0-x86_64-dvd1.iso.SHA256SUM"
+ISO_MD5="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso.MD5SUM"
+ISO_SHA1="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso.SHA1SUM"
+ISO_SHA256="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso.SHA256SUM"
 VOLUME_NAME="LIBRETAX-RH9"
 BUILD_DIR="/tmp/LIBRETAX-BUILD-$(date -Iminutes)"
 ARTIFACT_DIR="/tmp/LIBRETAX-ARTIFACT-$(date -Iminutes)"
@@ -40,12 +41,6 @@ ISOMNTDIR="${BUILD_DIR}/mnt"
 ####################################################################################################
 # Start Function Definitions
 ####################################################################################################
-
-# Find and set the environment file in the home directory of runner.
-set_env() {
-	source "${ENV}"
-	print_info "Set environment: ${ENV}"
-}
 
 exception() {
 	print_error $1
@@ -105,7 +100,6 @@ cleanup() {
 # Start Script Execution
 ####################################################################################################
 echo -e "${BIGREEN}Starting LibreTax ISO Build...${NC}"
-set_env
 prep_build_dir
 pull_latest_iso
 prep_build
