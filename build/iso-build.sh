@@ -41,7 +41,8 @@ ISOMNTDIR="${BUILD_DIR}/mnt"
 
 # Find and set the environment file in the home directory of runner.
 set_env() {
- 	source $(find ~ -name "lt.env")
+	local env=$(find ~ -name "lt.env")
+ 	source ${env}
 }
 
 # Creates the directory used to build
