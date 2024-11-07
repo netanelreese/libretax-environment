@@ -108,7 +108,8 @@ create_ef() {
     		local sha256=$(sha256sum ${ks} | awk '{print $1}')
       		local path="${ks}"
 		local size=$(ls -lp "${ks}" | grep -v '/$' | awk '{print $5}' | tr -d '[:space:]')
-cat << EOF >> 
+		print_info "Kickstart ${ks}: Size: ${size}, SHA256: ${sha256}, SHA1: ${sha1}, MD5: ${md5}"
+cat << EOF >> ${tmp_ef}
         },
         {
             "checksums": {
@@ -128,7 +129,8 @@ EOF
     		local sha256=$(sha256sum ${PKG_DEST}/${pkg} | awk '{print $1}')
       		local path="pkg/${pkg}"
 		local size=$(ls -lp pkg/"${pkg}" | grep -v '/$' | awk '{print $5}' | tr -d '[:space:]')
-cat << EOF >> 
+                print_info "Package ${pkg}: Size: ${size}, SHA256: ${sha256}, SHA1: ${sha1}, MD5: ${md5}"
+cat << EOF >> "${tmp_ef}" 
         },
         {
             "checksums": {
@@ -143,8 +145,12 @@ EOF
 
 # End of the json.
 	tail -n 6 ${EXTRA_FILES} >> ${tmp_ef}
+	
+	cat ${tmp_ef}
 
  	mv -f ${tmp_ef} ${EXTRA_FILES}
+
+	cat ${EXTRA_FILES}
 
  	popd
 }
