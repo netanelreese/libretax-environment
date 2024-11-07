@@ -25,7 +25,12 @@ fi
 ####################################################################################################
 
 REPO_DIR="$(cd .. && pwd)"
-ENV=""
+KS_DIR="${REPO_DIR}/ks"
+GRUB_FILE="${REPO_DIR}/grub/lt_grub.cfg"
+KS_DEST="${BUILD_DIR}/ks"
+GRUB_DEST="${BUILD_DIR}/EFI/BOOT/grub.cfg"
+EXTRA_FILES="${BUILD_DIR}/extra_files.json"
+PKG_DEST="${BUILD_DIR}/LibreTax"
 ISO_SRC="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso"
 SRC_ISO="CentOS-Stream-9-latest-x86_64-dvd1.iso"
 ISO_MD5="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso.MD5SUM"
@@ -69,6 +74,79 @@ pull_latest_iso() {
  	sha1sum -c "${SRC_ISO}".SHA1SUM || exception "SHA1 CHECKSUM DOES NOT MATCH"
   	sha256sum -c "${SRC_ISO}".SHA256SUM || exception "SHA256 CHECKSUM DOES NOT MATCH"
    	popd
+}
+
+prep_build() {
+	mkdir -p "${KS_DEST}" || exception "Could not create ${KS_DEST}"
+	mkdir -p "${PKG_DEST}" || exception "Could not create ${PKG_DEST}"
+
+ 	print_info "Copying ${GRUB_FILE} to ${GRUB_DEST}"
+ 	cp -f "${GRUB_FILE}" "${GRUB_DEST}" || exception "Could not copy ${GRUB_FILE}"
+
+  	print_info "Copying kickstarts to ${KS_DEST}"
+   	cp -f "${KS_DIR}/*-ks.cfg" "${KS_DEST}" || exception "Could not copy host kickstarts"
+    	cp -rf "${KS_DIR}/common" "${KS_DEST}" || exception "Could not copy common kickstarts"
+
+     	print_warn "Packages not implemented yet"
+
+	create_ef
+}
+
+create_ef() {
+	tmp_ef="./extra_files_tmp.json"
+ 	tmp_ef=$(realpath ${tmp_ef})
+ 	print_info "Creating extra_files.json"
+
+ 	# Copy license and EULA from the existing file.
+  	head -n 19 ${EXTRA_FILES} >> ${tmp_ef}
+
+ 	pushd "${BUILD_DIR}"
+   	# make entries for kickstarts
+    	for ks in $(find ks/ -name "*.cfg"); do
+		local md5=$(md5sum ${ks} | awk '{print $1}')
+  		local sha1=$(sha1sum ${ks} | awk '{print $1}')
+    		local sha256=$(sha256sum ${ks} | awk '{print $1}')
+      		local path="${ks}"
+		local size=$(ls -lp "${ks}" | grep -v '/$' | awk '{print $5}' | tr -d '[:space:]')
+cat << EOF >> 
+        },
+        {
+            "checksums": {
+                "md5": "${md5}",
+	  	"sha1": "${sha1}",
+     		"sha256": "${sha256}"
+	     },
+             "file": "${path}",
+	     "size": ${size}
+EOF
+     	done
+
+ 	# Do Custom Packages
+      	for pkg in $(ls -p ${PKG_DEST} | grep -v '/$'); do
+		local md5=$(md5sum ${PKG_DEST}/${pkg} | awk '{print $1}')
+  		local sha1=$(sha1sum ${PKG_DEST}/${pkg} | awk '{print $1}')
+    		local sha256=$(sha256sum ${PKG_DEST}/${pkg} | awk '{print $1}')
+      		local path="pkg/${pkg}"
+		local size=$(ls -lp pkg/"${pkg}" | grep -v '/$' | awk '{print $5}' | tr -d '[:space:]')
+cat << EOF >> 
+        },
+        {
+            "checksums": {
+                "md5": "${md5}",
+	  	"sha1": "${sha1}",
+     		"sha256": "${sha256}"
+	     },
+             "file": "${path}",
+	     "size": ${size}
+EOF
+	done
+
+# End of the json.
+	tail -n 6 ${EXTRA_FILES} >> ${tmp_ef}
+
+ 	mv -f ${tmp_ef} ${EXTRA_FILES}
+
+ 	popd
 }
 
 # Create the new ISO with xorriso
