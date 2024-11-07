@@ -48,7 +48,7 @@ ISOMNTDIR="${BUILD_DIR}/mnt"
 ####################################################################################################
 
 exception() {
-	print_error $1
+	print_error $@
  	cleanup
   	exit 1
 }
