@@ -23,6 +23,8 @@ fi
 # Start Global Member Assignment
 ####################################################################################################
 
+REPO_DIR="$(cd .. && pwd)"
+ENV="${REPO_DIR}/pkg/lt_env/SOURCE/lt.env"
 ISO_SRC="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso"
 SRC_ISO="CentOS-Stream-9-latest-x86_64-dvd1.iso"
 ISO_MD5="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-boot.iso.MD5SUM"
@@ -41,12 +43,13 @@ ISOMNTDIR="${BUILD_DIR}/mnt"
 
 # Find and set the environment file in the home directory of runner.
 set_env() {
-	local env=$(find ~ -name "lt.env")
- 	source ${env}
+	source "${ENV}"
+	print_info "Setting environment file: ${ENV}"
 }
 
 # Creates the directory used to build
 prep_build_dir() {
+	print_info "Creating temp build directory at ${BUILD_DIR}"
 	mkdir -p "${ISOWORKDIR}" || print_error "Could not create ${ISOWORKDIR}" && cleanup && exit 1;
  	mkdir -p "${ISOMNTDIR}" || print_error "Could not create ${ISOMNTDIR}" && cleanup && exit 1;
 	print_success "Build Directory Created: ${BUILD_DIR}"
