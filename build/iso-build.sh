@@ -63,12 +63,15 @@ prep_build_dir() {
 
 # Pulls latest x64 iso from cent mirror
 pull_latest_iso() {
+	print_info "Pulling Latest Cent Stream 9 ISO"
 	curl "${ISO_SRC}" -o "${BUILD_DIR}/${SRC_ISO}" || exception "Could not pull latest CentOS iso"
+ 	print_info "Pulling Latest Cent Stream 9 checksums (MD5, SHA1, SHA256)"
  	curl "${ISO_MD5}" -o "${BUILD_DIR}/${SRC_ISO}.MD5SUM" || exception "Could not pull latest CentOS iso MD5 checksum"
 	curl "${ISO_SHA1}" -o "${BUILD_DIR}/${SRC_ISO}.SHA1SUM" || exception "Could not pull latest CentOS iso SHA1 checksum"
  	curl "${ISO_SHA256}" -o "${BUILD_DIR}/${SRC_ISO}.SHA256SUM" || exception "Could not pull latest CentOS iso SHA256 checksum"
 
  	# Verify Checksums
+  	print_info "Verifying Checksums"
   	pushd "${BUILD_DIR}"
 	md5sum -c "${SRC_ISO}".MD5SUM || exception "MD5 CHECKSUM DOES NOT MATCH"
  	sha1sum -c "${SRC_ISO}".SHA1SUM || exception "SHA1 CHECKSUM DOES NOT MATCH"
@@ -78,10 +81,11 @@ pull_latest_iso() {
 
 prep_build() {
 	print_info "Mounting ${SRC_ISO} to ${ISOMNTDIR}" 
- 	mount "${SRC_ISO}" "${ISOMNTDIR}" || exception "Failed to mount source iso"
+ 	mount "${BUILD_DIR}/${SRC_ISO}" "${ISOMNTDIR}" || exception "Failed to mount source iso"
   	print_info "Copying contents of ${SRC_ISO} to ${ISOWORKDIR}"
    	cp -rf "${ISOMNTDIR}/*" "${ISOWORKDIR}" || exception "Failed to copy iso contents"
- 
+
+  	print_info "Creating kickstart and custom package dirs in working directory"
 	mkdir -p "${KS_DEST}" || exception "Could not create ${KS_DEST}"
 	mkdir -p "${PKG_DEST}" || exception "Could not create ${PKG_DEST}"
 
@@ -91,8 +95,10 @@ prep_build() {
   	print_info "Copying kickstarts to ${KS_DEST}"
    	cp -f "${KS_DIR}/*-ks.cfg" "${KS_DEST}" || exception "Could not copy host kickstarts"
     	cp -rf "${KS_DIR}/common" "${KS_DEST}" || exception "Could not copy common kickstarts"
-
+     
      	print_warn "Packages not implemented yet"
+	print_warn "This is where the rpm-build script would be called"
+ 	print_warn "This is where the package copying would be called"
 
 	create_ef
 }
@@ -103,7 +109,7 @@ create_ef() {
  	print_info "Creating extra_files.json"
 
  	# Copy license and EULA from the existing file.
-  	head -n 19 ${EXTRA_FILES} >> ${tmp_ef}
+  	head -n 19 ${EXTRA_FILES} >> ${tmp_ef} || exception "Could not create temp json with header"
 
  	pushd "${BUILD_DIR}"
    	# make entries for kickstarts
