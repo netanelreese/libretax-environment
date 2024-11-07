@@ -77,6 +77,11 @@ pull_latest_iso() {
 }
 
 prep_build() {
+	print_info "Mounting ${SRC_ISO} to ${ISOMNTDIR}" 
+ 	mount "${SRC_ISO}" "${ISOMNTDIR}" || exception "Failed to mount source iso"
+  	print_info "Copying contents of ${SRC_ISO} to ${ISOWORKDIR}"
+   	cp -rf "${ISOMNTDIR}/*" "${ISOWORKDIR}" || exception "Failed to copy iso contents"
+ 
 	mkdir -p "${KS_DEST}" || exception "Could not create ${KS_DEST}"
 	mkdir -p "${PKG_DEST}" || exception "Could not create ${PKG_DEST}"
 
