@@ -76,6 +76,7 @@ pull_latest_iso() {
 	md5sum -c "${SRC_ISO}".MD5SUM || exception "MD5 CHECKSUM DOES NOT MATCH"
  	sha1sum -c "${SRC_ISO}".SHA1SUM || exception "SHA1 CHECKSUM DOES NOT MATCH"
   	sha256sum -c "${SRC_ISO}".SHA256SUM || exception "SHA256 CHECKSUM DOES NOT MATCH"
+   	print_success "Checksums Verified!"
    	popd
 }
 
@@ -101,6 +102,7 @@ prep_build() {
  	print_warn "This is where the package copying would be called"
 
 	create_ef
+	print_success "LibreTax ISO ready to create!"
 }
 
 create_ef() {
@@ -164,6 +166,7 @@ EOF
 	cat ${EXTRA_FILES}
 
  	popd
+  	print_success "Creation of extra_file.json successful!"
 }
 
 # Create the new ISO with xorriso
@@ -178,6 +181,9 @@ build_iso() {
 	if [ $? -ne 0 ]; then
 	    exception "Failed to create ${OUTPUT_ISO}"
 	fi
+
+ 	print_success "LibreTax ISO Successfully Created!"
+  	print_success "Located at: ${OUTPUT_ISO}"
 }
 
 # Cleans up tmp build directory
@@ -188,7 +194,8 @@ cleanup() {
 		fi
 	fi
 	
-     	rm -rf ${BUILD_DIR} || print_warn "Could not delete ${BUILD_DIR}"
+	rm -rf ${BUILD_DIR} || print_warn "Could not delete ${BUILD_DIR}"
+	print_success "Temporary Build Dir Cleaned!"
 }
 
 ####################################################################################################
