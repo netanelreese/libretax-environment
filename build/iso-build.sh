@@ -65,7 +65,7 @@ prep_build_dir() {
 pull_latest_iso() {
 	curl "${ISO_SRC}" -o "${BUILD_DIR}/${SRC_ISO}" || exception "Could not pull latest CentOS iso"
  	curl "${ISO_MD5}" -o "${BUILD_DIR}/${SRC_ISO}.MD5SUM" || exception "Could not pull latest CentOS iso MD5 checksum"
-	curl "${IDO_SHA1}" -o "${BUILD_DIR}/${SRC_ISO}.SHA1SUM" || exception "Could not pull latest CentOS iso SHA1 checksum"
+	curl "${ISO_SHA1}" -o "${BUILD_DIR}/${SRC_ISO}.SHA1SUM" || exception "Could not pull latest CentOS iso SHA1 checksum"
  	curl "${ISO_SHA256}" -o "${BUILD_DIR}/${SRC_ISO}.SHA256SUM" || exception "Could not pull latest CentOS iso SHA256 checksum"
 
  	# Verify Checksums
