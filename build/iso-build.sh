@@ -11,7 +11,7 @@
 # MODIFIED: 2024-11-07
 # VERSION: 1.0
 #==============================================================================
-source $(cd .. && pwd)/pkg/lt_env/SOURCE/lt.env
+source "$(cd .. && pwd)"/pkg/lt_env/SOURCE/lt.env
 
 set -e
 
@@ -48,7 +48,7 @@ ISOMNTDIR="${BUILD_DIR}/mnt"
 ####################################################################################################
 
 exception() {
-	print_error $@
+	print_error "$@"
  	cleanup
   	exit 1
 }
@@ -116,54 +116,54 @@ create_ef() {
  	pushd "${BUILD_DIR}"
    	# make entries for kickstarts
     	for ks in $(find ks/ -name "*.cfg"); do
-		local md5=$(md5sum ${ks} | awk '{print $1}')
-  		local sha1=$(sha1sum ${ks} | awk '{print $1}')
-    		local sha256=$(sha256sum ${ks} | awk '{print $1}')
-      		local path="${ks}"
-		local size=$(ls -lp "${ks}" | grep -v '/$' | awk '{print $5}' | tr -d '[:space:]')
-		print_info "Kickstart ${ks}: Size: ${size}, SHA256: ${sha256}, SHA1: ${sha1}, MD5: ${md5}"
-cat << EOF >> ${tmp_ef}
+			md5=$(md5sum ${ks} | awk '{print $1}')
+  			sha1=$(sha1sum ${ks} | awk '{print $1}')
+    		sha256=$(sha256sum ${ks} | awk '{print $1}')
+      		path="${ks}"
+			size=$(ls -lp "${ks}" | grep -v '/$' | awk '{print $5}' | tr -d '[:space:]')
+			print_info "Kickstart ${ks}: Size: ${size}, SHA256: ${sha256}, SHA1: ${sha1}, MD5: ${md5}"
+cat << EOF >> "${tmp_ef}"
         },
         {
             "checksums": {
                 "md5": "${md5}",
-	  	"sha1": "${sha1}",
-     		"sha256": "${sha256}"
-	     },
-             "file": "${path}",
-	     "size": ${size}
+	  			"sha1": "${sha1}",
+     			"sha256": "${sha256}"
+	     	},
+            "file": "${path}",
+	     	"size": ${size}
 EOF
      	done
 
  	# Do Custom Packages
-      	for pkg in $(ls -p ${PKG_DEST} | grep -v '/$'); do
-		local md5=$(md5sum ${PKG_DEST}/${pkg} | awk '{print $1}')
-  		local sha1=$(sha1sum ${PKG_DEST}/${pkg} | awk '{print $1}')
-    		local sha256=$(sha256sum ${PKG_DEST}/${pkg} | awk '{print $1}')
-      		local path="pkg/${pkg}"
-		local size=$(ls -lp pkg/"${pkg}" | grep -v '/$' | awk '{print $5}' | tr -d '[:space:]')
-                print_info "Package ${pkg}: Size: ${size}, SHA256: ${sha256}, SHA1: ${sha1}, MD5: ${md5}"
+      	for pkg in $(ls -p "${PKG_DEST}" | grep -v '/$'); do
+			md5=$(md5sum "${PKG_DEST}"/"${pkg}" | awk '{print $1}')
+  			sha1=$(sha1sum "${PKG_DEST}"/"${pkg}" | awk '{print $1}')
+    		sha256=$(sha256sum "${PKG_DEST}"/"${pkg}" | awk '{print $1}')
+      		path="pkg/${pkg}"
+			size="$(ls -lp pkg/"${pkg}" | grep -v '/$' | awk '{print $5}' | tr -d '[:space:]')"
+            print_info "Package ${pkg}: Size: ${size}, SHA256: ${sha256}, SHA1: ${sha1}, MD5: ${md5}"
 cat << EOF >> "${tmp_ef}" 
         },
         {
             "checksums": {
                 "md5": "${md5}",
-	  	"sha1": "${sha1}",
-     		"sha256": "${sha256}"
-	     },
-             "file": "${path}",
-	     "size": ${size}
+	  			"sha1": "${sha1}",
+     			"sha256": "${sha256}"
+	    	},
+            "file": "${path}",
+	    	"size": ${size}
 EOF
 	done
 
 # End of the json.
-	tail -n 6 ${EXTRA_FILES} >> ${tmp_ef}
+	tail -n 6 "${EXTRA_FILES}" >> "${tmp_ef}"
 	
-	cat ${tmp_ef}
+	cat "${tmp_ef}"
 
- 	mv -f ${tmp_ef} ${EXTRA_FILES}
+ 	mv -f "${tmp_ef}" "${EXTRA_FILES}"
 
-	cat ${EXTRA_FILES}
+	cat "${EXTRA_FILES}"
 
  	popd
   	print_success "Creation of extra_file.json successful!"
@@ -178,7 +178,7 @@ build_iso() {
     	        -boot-info-table --eltorito-alt-boot -e images/efiboot.img -no-emul-boot \
     	        -o "${OUTPUT_ISO}" "${ISOWORKDIR}"
 
-	if [ $? -ne 0 ]; then
+	if [ "$?" -ne 0 ]; then
 	    exception "Failed to create ${OUTPUT_ISO}"
 	fi
 
@@ -189,12 +189,12 @@ build_iso() {
 # Cleans up tmp build directory
 cleanup() {
 	if [[ -d "${ISOMNTDIR}" ]]; then
-		if mountpoint -q ${ISOMNTDIR}; then
-			umount ${ISOMNTDIR} || print_warn "Could not unmount ${ISOMNTDIR}"
+		if mountpoint -q "${ISOMNTDIR}"; then
+			umount "${ISOMNTDIR}" || print_warn "Could not unmount ${ISOMNTDIR}"
 		fi
 	fi
 	
-	rm -rf ${BUILD_DIR} || print_warn "Could not delete ${BUILD_DIR}"
+	rm -rf "${BUILD_DIR}" || print_warn "Could not delete ${BUILD_DIR}"
 	print_success "Temporary Build Dir Cleaned!"
 }
 
