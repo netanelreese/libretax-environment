@@ -84,9 +84,9 @@ prep_build() {
 	print_info "Mounting ${SRC_ISO} to ${ISOMNTDIR}" 
  	mount "${BUILD_DIR}/${SRC_ISO}" "${ISOMNTDIR}" || exception "Failed to mount source iso"
   	print_info "Copying contents of ${SRC_ISO} to ${ISOWORKDIR}"
-   	cp -rf "${ISOMNTDIR}/*" "${ISOWORKDIR}" || exception "Failed to copy iso contents"
-
-  	print_info "Creating kickstart and custom package dirs in working directory"
+	rsync -a "${ISOMNTDIR}/" "${ISOWORKDIR}/" || exception "Failed to copy ISO contents"
+  	
+	print_info "Creating kickstart and custom package dirs in working directory"
 	mkdir -p "${KS_DEST}" || exception "Could not create ${KS_DEST}"
 	mkdir -p "${PKG_DEST}" || exception "Could not create ${PKG_DEST}"
 
