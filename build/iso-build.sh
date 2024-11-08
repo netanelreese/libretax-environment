@@ -27,10 +27,10 @@ fi
 REPO_DIR="$(cd .. && pwd)"
 KS_DIR="${REPO_DIR}/ks"
 GRUB_FILE="${REPO_DIR}/grub/lt_grub.cfg"
-KS_DEST="${BUILD_DIR}/ks"
-GRUB_DEST="${BUILD_DIR}/EFI/BOOT/grub.cfg"
-EXTRA_FILES="${BUILD_DIR}/extra_files.json"
-PKG_DEST="${BUILD_DIR}/LibreTax"
+KS_DEST="${ISOWORKDIR}/ks"
+GRUB_DEST="${ISOWORKDIR}/EFI/BOOT/grub.cfg"
+EXTRA_FILES="${ISOWORKDIR}/extra_files.json"
+PKG_DEST="${ISOWORKDIR}/LibreTax"
 ISO_SRC="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso"
 SRC_ISO="CentOS-Stream-9-latest-x86_64-dvd1.iso"
 ISO_MD5="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso.MD5SUM"
@@ -95,9 +95,9 @@ prep_build() {
 
   	print_info "Copying kickstarts to ${KS_DEST}"
    	cp -f "${KS_DIR}/*-ks.cfg" "${KS_DEST}" || exception "Could not copy host kickstarts"
-    	cp -rf "${KS_DIR}/common" "${KS_DEST}" || exception "Could not copy common kickstarts"
+    cp -rf "${KS_DIR}/common" "${KS_DEST}" || exception "Could not copy common kickstarts"
      
-     	print_warn "Packages not implemented yet"
+    print_warn "Packages not implemented yet"
 	print_warn "This is where the rpm-build script would be called"
  	print_warn "This is where the package copying would be called"
 
