@@ -27,10 +27,6 @@ fi
 REPO_DIR="$(cd .. && pwd)"
 KS_DIR="${REPO_DIR}/ks"
 GRUB_FILE="${REPO_DIR}/grub/lt_grub.cfg"
-KS_DEST="${ISOWORKDIR}/ks"
-GRUB_DEST="${ISOWORKDIR}/EFI/BOOT/grub.cfg"
-EXTRA_FILES="${ISOWORKDIR}/extra_files.json"
-PKG_DEST="${ISOWORKDIR}/LibreTax"
 ISO_SRC="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso"
 SRC_ISO="CentOS-Stream-9-latest-x86_64-dvd1.iso"
 ISO_MD5="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-dvd1.iso.MD5SUM"
@@ -42,6 +38,10 @@ ARTIFACT_DIR="/tmp/LIBRETAX-ARTIFACT-$(date +'%Y%m%d_%H%M%S')"
 OUTPUT_ISO="${ARTIFACT_DIR}/${VOLUME_NAME}.iso"
 ISOWORKDIR="${BUILD_DIR}/workdir"
 ISOMNTDIR="${BUILD_DIR}/mnt"
+KS_DEST="${ISOWORKDIR}"/ks
+GRUB_DEST="${ISOWORKDIR}"/EFI/BOOT/grub.cfg
+EXTRA_FILES="${ISOWORKDIR}/extra_files.json"
+PKG_DEST="${ISOWORKDIR}/LibreTax"
 
 ####################################################################################################
 # Start Function Definitions
