@@ -94,8 +94,7 @@ prep_build() {
  	cp -f "${GRUB_FILE}" "${GRUB_DEST}" || exception "Could not copy ${GRUB_FILE}"
 
   	print_info "Copying kickstarts to ${KS_DEST}"
-   	cp -f "${KS_DIR}/*-ks.cfg" "${KS_DEST}" || exception "Could not copy host kickstarts"
-    cp -rf "${KS_DIR}/common" "${KS_DEST}" || exception "Could not copy common kickstarts"
+	rsync -a "${KS_DIR}/" "${KS_DEST}/" || exception "Failed to copy ISO contents"
      
     print_warn "Packages not implemented yet"
 	print_warn "This is where the rpm-build script would be called"
