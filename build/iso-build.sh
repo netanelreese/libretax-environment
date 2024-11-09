@@ -11,6 +11,7 @@
 # MODIFIED: 2024-11-07
 # VERSION: 1.0
 #==============================================================================
+
 source "$(cd .. && pwd)"/pkg/lt_env/SOURCE/lt.env
 
 set -e
@@ -161,11 +162,7 @@ EOF
 # End of the json.
 	tail -n 6 "${EXTRA_FILES}" >> "${tmp_ef}"
 	
-	cat "${tmp_ef}"
-
  	mv -f "${tmp_ef}" "${EXTRA_FILES}"
-
-	cat "${EXTRA_FILES}"
 
  	popd
   	print_success "Creation of extra_file.json successful!"
