@@ -97,7 +97,7 @@ prep_build() {
 	rsync -a "${KS_DIR}/" "${KS_DEST}/" || exception "Failed to copy ISO contents"
 
 	sub=$(hostname -I | cut -d'.' -f1-3)
-	sed -i "s/LT_NET/${sub}/g" "$(find "${KS_DEST}" -name "*ks.cfg")" || exception "Could not replace LT_NET in kickstarts"
+	find "${KS_DEST}" -name "*ks.cfg" -exec sed -i "s/LT_NET/${sub}/g" {} + || exception "Could not replace LT_NET in kickstarts"
      
     print_warn "Packages not implemented yet"
 	print_warn "This is where the rpm-build script would be called"
