@@ -25,8 +25,9 @@ fi
 # Start Global Member Assignment
 ####################################################################################################
 
+SUBNET=$(hostname -I | cut -d'.' -f1-3)
 REPO_DIR="$(cd .. && pwd)"
-RPM_DIR="${REPO_DIR}/rpms"
+RPM_DIR="${REPO_DIR}/pkg"
 RPM_TMP="/tmp/LIBRETAX-RPM-$(date +'%Y%m%d_%H%M%S')"
 
 ####################################################################################################
@@ -42,10 +43,8 @@ exception() {
 prep_rpm_tree() {
     mkdir -p "${RPM_TMP}" || exception "Could not create ${RPM_TMP}"
     rpmdev-setuptree
-    pushd "${RPM_DIR}"
-    find . -name SOURCE -exec cp -r {} "${RPM_TMP}" \;
-    find . -name SPECS -exec cp -r {} "${RPM_TMP}" \;
-    popd
+    find "${RPM_DIR}" -name SOURCE -exec cp -r {} "${RPM_TMP}" \;
+    find "${RPM_DIR}" -name SPECS -exec cp -r {} "${RPM_TMP}" \;
 }
 
 build_rpms() {
