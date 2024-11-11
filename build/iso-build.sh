@@ -8,7 +8,7 @@
 #     * xorriso
 # AUTHOR: Nathanael G. Reese, nathanael.g.reese@gmail.com
 # CREATED: 2024-11-07
-# MODIFIED: 2024-11-07
+# MODIFIED: 2024-11-10
 # VERSION: 1.0
 #==============================================================================
 
@@ -200,6 +200,7 @@ cleanup() {
 ####################################################################################################
 # Start Script Execution
 ####################################################################################################
+
 echo -e "${BIGREEN}Starting LibreTax ISO Build...${NC}"
 prep_build_dir
 pull_latest_iso
