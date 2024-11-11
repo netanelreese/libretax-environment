@@ -42,7 +42,6 @@ exception() {
 
 prep_rpm_tree() {
     mkdir -p "${RPM_TMP}" || exception "Could not create ${RPM_TMP}"
-    rpmdev-setuptree
     find "${RPM_DIR}" -name SOURCE -exec cp -r {} "${RPM_TMP}" \;
     find "${RPM_DIR}" -name SPECS -exec cp -r {} "${RPM_TMP}" \;
 }
