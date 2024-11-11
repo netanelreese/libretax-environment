@@ -47,6 +47,12 @@ prep_rpm_tree() {
     find "${RPM_DIR}" -name SPECS -exec cp -r {} "${RPM_TMP}" \;
 }
 
+prep_sources() {
+    pushd "${RPM_TMP}"
+    find "${RPM_TMP}" -name "SPECS" -exec sed -i "s/LT_NET/${SUBNET}/g" {} \;
+    popd
+}
+
 build_rpms() {
     pushd "${RPM_TMP}"
     rpmbuild -bb SPECS/*.spec
@@ -63,7 +69,7 @@ cleanup() {
 ####################################################################################################
 
 prep_rpm_tree
+prep_sources
 build_rpms
-cleanup
 
 exit 0
